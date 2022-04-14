@@ -1,0 +1,33 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  empapi:
+    image: rsbnhyd/employeeapi
+    container_name: empapi
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8999:80
+    depends_on:
+      - sqldb
+  webclient:
+    image: rsbnhyd/empwebclient
+    container_name: empwebclient
+    ports:
+      - 8998:8998
+    depends_on:
+      - sqldb
+      - empapi
+  sqldb:
+    image: rsbnhyd/sqlserver
+    container_name: sqldb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Raj@MDPR1
+    volumes:
+      - /e/sql/data:/var/opt/mssql/data:rw
+    ports:
+      - 1433:1433
